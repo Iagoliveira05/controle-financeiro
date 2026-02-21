@@ -129,6 +129,14 @@ export default function AddTransaction() {
           <Text className='text-2xl text-white font-bold'>Salvar</Text>
         </TouchableOpacity>
 
+        {/* Cancelar */}
+        <TouchableOpacity
+          onPress={router.back}
+          className='rounded-xl bg-zinc-800 p-4 items-center justify-center mt-2'
+        >
+          <Text className='text-xl text-white font-bold'>Cancelar</Text>
+        </TouchableOpacity>
+
       </View>
 
       

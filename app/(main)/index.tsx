@@ -13,8 +13,8 @@ export default function Home() {
   const [deleteAction, setDeleteAction] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
-const [sortField, setSortField] = useState<'date' | 'amount' | null>(null);
-const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = useState<'date' | 'amount' | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useFocusEffect(
     useCallback(() => {
@@ -69,24 +69,33 @@ const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
 
   return (
-    <SafeAreaView className='flex-1 bg-background'>
+    <SafeAreaView className='flex-1 bg-zinc-900'>
       <View className='flex-1 px-4'>
         {/* Saldo Atual */}
-        <View className='flex-row gap-2'>
-          <Text className='text-2xl text-white'>Saldo Atual</Text>
-          <Text className='text-2xl text-gray-200'>R$ {balance.toFixed(2)}</Text>
+        <View className='mt-4 bg-slate-800 p-4 rounded-2xl'>
+          <Text className='text-base text-white'>Saldo Atual</Text>
+          <Text 
+            className={`text-3xl mt-2 ${balance >= 0 ? 'text-green-400' : 'text-red-400'} font-bold`}
+          >R$ {balance.toFixed(2).replace(".", ",")}</Text>
         </View>
 
         {/* Renda e despesas */}
-        <View className='flex-row gap-12 mt-4 mb-4 justify-center'>
-          <View className='items-center bg-gray-800 px-5 py-3 rounded-2xl'>
-            <Text className='text-white text-xl font-bold'>Renda</Text>
-            <Text className='text-green-400 text-lg'>R$ {income.toFixed(2).replace('.', ',')}</Text>
+        <View className='flex-row gap-4 mt-4 mb-4'>
+          
+          <View className='flex-1 items-center bg-gray-800 py-4 rounded-2xl'>
+            <Text className='text-white text-lg font-semibold'>Renda</Text>
+            <Text className='text-green-400 text-xl font-bold mt-1'>
+              R$ {income.toFixed(2).replace('.', ',')}
+            </Text>
           </View>
-          <View className='items-center bg-gray-800 px-5 py-3 rounded-2xl'>
-            <Text className='text-white text-xl font-bold'>Despesas</Text>
-            <Text className='text-red-400 text-lg'>R$ {expense.toFixed(2).replace('.', ',')}</Text>
+
+          <View className='flex-1 items-center bg-gray-800 py-4 rounded-2xl'>
+            <Text className='text-white text-lg font-semibold'>Despesas</Text>
+            <Text className='text-red-400 text-xl font-bold mt-1'>
+              R$ {expense.toFixed(2).replace('.', ',')}
+            </Text>
           </View>
+
         </View>
 
         <View className='flex-row items-center mb-4'>
