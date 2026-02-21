@@ -3,11 +3,14 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router';
 import { addTransaction } from '@/src/services/transactionService';
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function AddTransaction() {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('income');
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   
   async function handleAdd() {
     if (!title || !amount) {
@@ -25,12 +28,11 @@ export default function AddTransaction() {
       title: title,
       amount: Number(amount.replace(',', '.')),
       type: type,
-      createdAt: Date.now()
+      date: date.toISOString()
     });
 
     router.back();
   }
-
 
   return (
     <SafeAreaView className='flex-1 bg-background'>
@@ -39,6 +41,7 @@ export default function AddTransaction() {
           Nova Transação
         </Text>
 
+        {/* Titulo */}
         <View className='mt-6'>
           <Text className='text-xl text-zinc-400'>Titulo</Text>
           <TextInput
@@ -50,6 +53,33 @@ export default function AddTransaction() {
           />
         </View>
 
+        {/* Data */}
+        <View className='mt-6'>
+          <Text className='text-xl text-zinc-400'>Data</Text>
+          <TouchableOpacity 
+            onPress={() => setShowPicker(true)}
+            className='bg-zinc-800 p-4 rounded-2xl text-white mt-2'
+          >
+            <Text className='text-white'>{date.toLocaleDateString('pt-BR')}</Text>
+          </TouchableOpacity>
+
+          {showPicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              onChange={(event, selectedDate) => {
+                setShowPicker(false);
+                if (selectedDate) {
+                  setDate(selectedDate);
+                }
+              }}
+            />
+          )}
+
+
+        </View>
+
+        {/* Valor */}
         <View className='mt-6'>
           <Text className='text-xl text-zinc-400'>Valor</Text>
           <TextInput
@@ -62,6 +92,7 @@ export default function AddTransaction() {
           />
         </View>
 
+        {/* Tipo */}
         <View className='flex-row justify-between mt-6 gap-6'>
           <TouchableOpacity
             onPress={() => setType('income')}
@@ -90,6 +121,7 @@ export default function AddTransaction() {
           </TouchableOpacity>
         </View>
 
+        {/* Salvar */}
         <TouchableOpacity
           onPress={handleAdd}
           className='rounded-xl bg-green-600 p-4 items-center justify-center mt-10'
@@ -98,6 +130,10 @@ export default function AddTransaction() {
         </TouchableOpacity>
 
       </View>
+
+      
+
     </SafeAreaView>
   )
 }
+

@@ -71,7 +71,10 @@ export default function Home() {
               }
             }>
               <View className='bg-slate-600 p-4 rounded-2xl my-2'>
-                <Text className='text-white'>{item.title}</Text>
+                <View className='flex-row justify-between'>
+                  <Text className='text-white'>{item.title}</Text>
+                  <Text className='text-slate-400'>{new Date(item.date).toLocaleDateString("pt-BR")}</Text>
+                </View>
                 <Text className={`text-lg ${item.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
                   {item.type === 'income' ? '+' : '-'} R$ {item.amount.toFixed(2).replace('.', ',')}
                 </Text>
