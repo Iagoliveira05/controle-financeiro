@@ -3,13 +3,18 @@ import React, { useCallback, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useFocusEffect } from 'expo-router'
 import { deleteTransaction, fetchTransactions } from '@/src/services/transactionService'
+import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+
 
 
 export default function Home() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [deleteAction, setDeleteAction] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showFilter, setShowFilter] = useState(false);
+const [sortField, setSortField] = useState<'date' | 'amount' | null>(null);
+const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useFocusEffect(
     useCallback(() => {
@@ -41,15 +46,38 @@ export default function Home() {
 
   const balance = income - expense;
 
+  const sortedTransactions = [...transactions].sort((a, b) => {
+    if (!sortField) return 0;
+
+    if (sortField === 'date') {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+
+      return sortOrder === 'asc'
+        ? dateA - dateB
+        : dateB - dateA;
+    }
+
+    if (sortField === 'amount') {
+      return sortOrder === 'asc'
+        ? a.amount - b.amount
+        : b.amount - a.amount;
+    }
+
+    return 0;
+  });
+
 
   return (
     <SafeAreaView className='flex-1 bg-background'>
       <View className='flex-1 px-4'>
+        {/* Saldo Atual */}
         <View className='flex-row gap-2'>
           <Text className='text-2xl text-white'>Saldo Atual</Text>
           <Text className='text-2xl text-gray-200'>R$ {balance.toFixed(2)}</Text>
         </View>
 
+        {/* Renda e despesas */}
         <View className='flex-row gap-12 mt-4 mb-4 justify-center'>
           <View className='items-center bg-gray-800 px-5 py-3 rounded-2xl'>
             <Text className='text-white text-xl font-bold'>Renda</Text>
@@ -61,8 +89,69 @@ export default function Home() {
           </View>
         </View>
 
+        <View className='flex-row items-center mb-4'>
+          <TouchableOpacity 
+            className='flex-row items-center justify-start py-2 px-4 gap-2 bg-slate-800 rounded-2xl self-start'
+            onPress={() => setShowFilter(!showFilter)}
+          >
+            <AntDesign name="filter" size={20} color="white" />
+          </TouchableOpacity>
+
+          {showFilter && (
+            <View className="flex-row ml-2 bg-slate-800 rounded-2xl py-2 px-4 self-start gap-3">
+
+              {/* Data */}
+              <TouchableOpacity
+                className="flex-row items-center gap-2"
+                onPress={() => {
+                  if (sortField === 'date') {
+                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortField('date');
+                    setSortOrder('asc');
+                  }
+                }}
+              >
+                <Text className="text-white text-base">Data</Text>
+                {sortField === 'date' && (
+                  <FontAwesome6
+                    name={sortOrder === 'asc' ? "arrow-up" : "arrow-down"}
+                    size={14}
+                    color="white"
+                  />
+                )}
+              </TouchableOpacity>
+
+              {/* Valor */}
+              <TouchableOpacity
+                className="flex-row items-center gap-2"
+                onPress={() => {
+                  if (sortField === 'amount') {
+                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortField('amount');
+                    setSortOrder('asc');
+                  }
+                }}
+              >
+                <Text className="text-white text-base">Valor</Text>
+                {sortField === 'amount' && (
+                  <FontAwesome6
+                    name={sortOrder === 'asc' ? "arrow-up" : "arrow-down"}
+                    size={14}
+                    color="white"
+                  />
+                )}
+              </TouchableOpacity>
+
+            </View>
+          )}
+        </View>
+
+
+        {/* Lista de transações */}
         <FlatList
-          data={transactions}
+          data={sortedTransactions}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => {
