@@ -2,13 +2,14 @@ import { View, Text, TextInput, Touchable, TouchableOpacity, Alert } from 'react
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router';
+import { addTransaction } from '@/src/services/transactionService';
 
-export default function addTransaction() {
+export default function AddTransaction() {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('income');
   
-  function handleSave() {
+  async function handleAdd() {
     if (!title || !amount) {
       Alert.alert("Erro",'Por favor, preencha todos os campos');
       return;
@@ -18,6 +19,13 @@ export default function addTransaction() {
       title,
       amount: Number(amount),
       type
+    });
+
+    await addTransaction({
+      title: title,
+      amount: Number(amount.replace(',', '.')),
+      type: type,
+      createdAt: Date.now()
     });
 
     router.back();
@@ -83,7 +91,7 @@ export default function addTransaction() {
         </View>
 
         <TouchableOpacity
-          onPress={handleSave}
+          onPress={handleAdd}
           className='rounded-xl bg-green-600 p-4 items-center justify-center mt-10'
         >
           <Text className='text-2xl text-white font-bold'>Salvar</Text>
